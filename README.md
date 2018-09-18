@@ -1,0 +1,45 @@
+## Package Status
+
+| Bintray | Windows | Linux & Mac | 
+|:--------:|:---------:|:-----------------:|
+|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/boost_base%3Abincrafters/images/download.svg)](https://bintray.com/bincrafters/public-conan/boost_base%3Abincrafters/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-boost_base?svg=true)](https://ci.appveyor.com/project/bincrafters/conan-boost_base)|NA|
+
+## Conan.io Information
+
+Bincrafters packages can be found in the following public Conan repository:
+
+[Bincrafters Public Conan Repository on Bintray](https://bintray.com/bincrafters/public-conan)
+
+*Note: You can click the "Set Me Up" button on the Bintray page above for instructions on using packages from this repository.*
+
+## Issues
+
+If you wish to report an issue or make a request for a Bincrafters package, please do so here:  
+
+[Bincrafters Community Issues](https://github.com/bincrafters/community/issues)
+
+## General Information
+
+This GIT repository is managed by the Bincrafters team and holds files related to Conan.io.  For detailed information about Bincrafters and Conan.io, please visit the following resources: 
+
+[Bincrafters Wiki - Common README](https://github.com/bincrafters/community/wiki/Common-README.md)
+
+[Bincrafters Technical Documentation](http://bincrafters.readthedocs.io/en/latest/)
+
+[Bincrafters Blog](https://bincrafters.github.io)
+
+## License Information
+
+The license for all files contained in this GIT repository are defined in the [LICENSE.md](LICENSE.md) file in this repository.  The licenses included with all Conan packages published by Bincrafters can be found in the Conan package directories in the following locations, relative to the Conan Cache root (`~/.conan` by default): 
+
+### License(s) for packaged software: 
+
+    ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/package/<random_package_id>/license/<LICENSE_FILES_HERE>
+
+*Note :   The most common filenames for OSS licenses are `LICENSE` AND `COPYING` without file extensions.*
+	
+### License for Bincrafters recipe: 
+
+    ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/export/LICENSE.md 
+
+	
