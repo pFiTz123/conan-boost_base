@@ -164,8 +164,11 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         self.cpp_info.libs = []
         
         if self.is_cycle_group():
-            # All variables will be advertised from group member packages
-            pass
+            for lib_short_name in self.lib_short_names:
+                lib_dir = os.path.join(lib_short_name, "lib")
+                self.cpp_info.libdirs.append(lib_dir)
+                include_dir = os.path.join(lib_short_name, "include")
+                self.cpp_info.includedirs.append(include_dir)
         elif self.is_in_cycle_group():
             group = self.deps_cpp_info[self.cycle_group]
             include_dir = os.path.join(group.rootpath, self.lib_name(), "include")
