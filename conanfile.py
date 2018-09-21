@@ -18,21 +18,19 @@ class BoostBaseConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     generators = "boost"
     
-    def __init__(self, output, runner, user=None, channel=None):
-        ConanFile.__init__(self, output, runner, user=None, channel=None)
-        
+    def boost_init(self):
         if not hasattr(self, "lib_short_names"):
             self.lib_short_names = []
         if not hasattr(self, "source_only_deps"):
             self.source_only_deps = []
         if not hasattr(self, "header_only_libs"):
             self.header_only_libs = []
+        if not hasattr(self, "cycle_group"):
+            self.cycle_group = ""
         if not hasattr(self, "b2_defines"):
             self.b2_defines = []
         if not hasattr(self, "b2_options"):
-            self.b2_options = {}
-        if not hasattr(self, "cycle_group"):
-            self.cycle_group = ""
+            self.b2_options = self.get_b2_options()
     
     def is_in_cycle_group(self):
         return self.cycle_group != ""
@@ -45,6 +43,9 @@ class BoostBaseConan(ConanFile):
 
     def is_header_only(self, lib_name):
         return (lib_name in self.header_only_libs)
+        
+    def get_b2_options(self):
+        return {}
         
     jam_header_only_content = """\
 import project ;
@@ -62,8 +63,15 @@ lib {lib_link_name} : : <name>{lib_link_name} <search>. : : $(usage) ;
     jam_alias_content = """\
 alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
 """
+
+    def all_b2_args(self):
+        option_str = " " .join([key + "=" + value for key,value in self.b2_options.items()])
+        define_str = " " .join(["define=" + define for define in self.b2_defines])
+        include_str = " " .join(["include=" + lib + '/include' for lib in self.source_only_deps])
+        return " ".join([option_str, include_str, define_str])
     
     def source(self):
+        self.boost_init()
         if self.is_cycle_group():
             self._source_common()
         elif self.is_in_cycle_group():
@@ -85,6 +93,7 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         pass
 
     def build(self):
+        self.boost_init()
         if self.is_cycle_group():
             self._build_common()
         elif self.is_in_cycle_group():
@@ -145,6 +154,7 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         pass
         
     def package(self):
+        self.boost_init()
         for lib_short_name in self.lib_short_names:
             self.copy(pattern="*LICENSE*", dst="license", src=lib_short_name)
             for subdir in ["lib", "include"]:
@@ -157,6 +167,7 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         pass
         
     def package_info(self):
+        self.boost_init()
         self.user_info.lib_short_names = ",".join(self.lib_short_names)
         self.cpp_info.includedirs = []
         self.cpp_info.libdirs = []
@@ -173,16 +184,16 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
             group = self.deps_cpp_info[self.cycle_group]
             include_dir = os.path.join(group.rootpath, self.lib_name(), "include")
             self.cpp_info.includedirs.append(include_dir)
+            lib_dir = os.path.join(group.rootpath, self.lib_name(), "lib")
+            self.cpp_info.libdirs.append(lib_dir)
             if not self.is_header_only(self.lib_name()):
-                lib_dir = os.path.join(group.rootpath, self.lib_name(), "lib")
-                self.cpp_info.libdirs.append(lib_dir)
                 self.cpp_info.libs.extend(tools.collect_libs(self, lib_dir))
         else:
             include_dir = os.path.join(self.lib_name(), "include")
             self.cpp_info.includedirs.append(include_dir)
+            lib_dir = os.path.join(self.lib_name(), "lib")
+            self.cpp_info.libdirs.append(lib_dir)
             if not self.is_header_only(self.lib_name()):
-                lib_dir = os.path.join(self.lib_name(), "lib")
-                self.cpp_info.libdirs.append(lib_dir)
                 self.cpp_info.libs.extend(tools.collect_libs(self, lib_dir))
     
         self.cpp_info.defines.append("BOOST_ALL_NO_LIB=1")
@@ -196,13 +207,9 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         pass
         
     def package_id(self):
-        if self.is_cycle_group():
-            pass
-        elif self.is_in_cycle_group():
-            pass
-        else:
-            if self.is_header_only(self.lib_name()):
-                self.info.header_only()
+        self.boost_init()
+        if self.is_header_only(self.lib_name()):
+            self.info.header_only()
 
         boost_deps_only = [dep_name for dep_name in self.info.requires.pkg_names if dep_name.startswith("boost_")]
 
@@ -214,10 +221,5 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
     def package_id_additional(self):
         pass
             
-    def all_b2_args(self):
-        option_str = " " .join([key + "=" + value for key,value in self.b2_options.items()])
-        define_str = " " .join(["define=" + define for define in self.b2_defines])
-        include_str = " " .join(["include=" + lib + '/include' for lib in self.source_only_deps])
-        return " ".join([option_str, include_str, define_str])
 
 
