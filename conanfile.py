@@ -27,6 +27,8 @@ class BoostBaseConan(ConanFile):
             self.header_only_libs = []
         if not hasattr(self, "cycle_group"):
             self.cycle_group = ""
+        if not hasattr(self, "b2_requires"):
+            self.b2_requires = []
         if not hasattr(self, "b2_defines"):
             self.b2_defines = []
         if not hasattr(self, "b2_options"):
@@ -69,6 +71,22 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         define_str = " " .join(["define=" + define for define in self.b2_defines])
         include_str = " " .join(["include=" + lib + '/include' for lib in self.source_only_deps])
         return " ".join([option_str, include_str, define_str])
+    
+    
+    def requirements(self):
+        self.boost_init()
+        for dep in self.b2_requires:
+            self.requires("{dep}/{ver}@{user}/{channel}".format(
+                    dep=dep,
+                    ver=self.version,
+                    user=self.user,
+                    channel=self.channel,
+            ))
+            
+        self.requirements_additional()
+        
+    def requirements_additional(self):
+        pass
     
     def source(self):
         self.boost_init()
