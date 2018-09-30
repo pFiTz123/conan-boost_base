@@ -29,6 +29,8 @@ class BoostBaseConan(ConanFile):
             self.cycle_group = ""
         if not hasattr(self, "b2_requires"):
             self.b2_requires = []
+        if not hasattr(self, "b2_build_requires"):
+            self.b2_build_requires = []
         if not hasattr(self, "b2_defines"):
             self.b2_defines = []
         if not hasattr(self, "b2_options"):
@@ -72,7 +74,12 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         include_str = " " .join(["include=" + lib + '/include' for lib in self.source_only_deps])
         return " ".join([option_str, include_str, define_str])
     
+    def configure(self):
+        self.configure_additional()
     
+    def configure_additional(self):
+        pass
+        
     def requirements(self):
         self.boost_init()
         for dep in self.b2_requires:
@@ -86,6 +93,21 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         self.requirements_additional()
         
     def requirements_additional(self):
+        pass
+        
+    def build_requirements(self):
+        self.boost_init()
+        for dep in self.b2_build_requires:
+            self.build_requires("{dep}/{ver}@{user}/{channel}".format(
+                    dep=dep,
+                    ver=self.version,
+                    user=self.user,
+                    channel=self.channel,
+            ))
+            
+        self.build_requirements_additional()
+        
+    def build_requirements_additional(self):
         pass
     
     def source(self):
@@ -225,16 +247,19 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         pass
         
     def package_id(self):
-        self.boost_init()
-        if self.is_header_only(self.lib_name()):
+        if self.__class__.__name__ == "BoostBaseConan":
             self.info.header_only()
+        else:
+            self.boost_init()
+            if self.is_header_only(self.lib_name()):
+                self.info.header_only()
 
-        boost_deps_only = [dep_name for dep_name in self.info.requires.pkg_names if dep_name.startswith("boost_")]
+            boost_deps_only = [dep_name for dep_name in self.info.requires.pkg_names if dep_name.startswith("boost_")]
 
-        for dep_name in boost_deps_only:
-            self.info.requires[dep_name].full_version_mode()
-                
-        self.package_id_additional()
+            for dep_name in boost_deps_only:
+                self.info.requires[dep_name].full_version_mode()
+                    
+            self.package_id_additional()
             
     def package_id_additional(self):
         pass
