@@ -7,14 +7,14 @@ import os
 
 class BoostBaseConan(ConanFile):
     name = "boost_base"
-    version = "1.67.0"
+    version = "1.68.0"
     url = "https://github.com/bincrafters/conan-boost_base"
     website = "https://github.com/boostorg"
     description = "Shared python code used in other Conan recipes for the Boost libraries"
     license = "MIT"
     exports = "LICENSE.md"
     short_paths = True
-    build_requires = "boost_generator/1.67.0@bincrafters/testing"
+    build_requires = "boost_generator/1.68.0@bincrafters/testing"
     settings = "os", "arch", "compiler", "build_type"
     generators = "boost"
     
@@ -40,7 +40,7 @@ class BoostBaseConan(ConanFile):
         return self.cycle_group != ""
         
     def is_cycle_group(self):
-        return ("level" in self.name and "group" in self.name)
+        return (("level" in self.name and "group" in self.name) or ("cycle_group" in self.name))
     
     def lib_name(self):
         return self.lib_short_names[0] if not self.is_cycle_group() and self.lib_short_names else ""
