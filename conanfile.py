@@ -14,7 +14,7 @@ class BoostBaseConan(ConanFile):
     license = "MIT"
     exports = "LICENSE.md"
     short_paths = True
-    build_requires = "boost_generator/1.69.0@bincrafters/testing"
+    build_requires = "boost_generator/1.69.0@bincrafters/stable"
     settings = "os", "arch", "compiler", "build_type"
     generators = "boost"
     
