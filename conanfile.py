@@ -8,6 +8,7 @@ import os
 class BoostBaseConan(ConanFile):
     name = "boost_base"
     version = "1.68.0"
+    version = "1.68.0"
     url = "https://github.com/bincrafters/conan-boost_base"
     website = "https://github.com/boostorg"
     description = "Shared python code used in other Conan recipes for the Boost libraries"
