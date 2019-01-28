@@ -224,16 +224,16 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
             group = self.deps_cpp_info[self.cycle_group]
             include_dir = os.path.join(group.rootpath, self.lib_name(), "include")
             self.cpp_info.includedirs.append(include_dir)
-            lib_dir = os.path.join(group.rootpath, self.lib_name(), "lib")
-            self.cpp_info.libdirs.append(lib_dir)
             if not self.is_header_only(self.lib_name()):
+                lib_dir = os.path.join(group.rootpath, self.lib_name(), "lib")
+                self.cpp_info.libdirs.append(lib_dir)
                 self.cpp_info.libs.extend(tools.collect_libs(self, lib_dir))
         else:
             include_dir = os.path.join(self.lib_name(), "include")
             self.cpp_info.includedirs.append(include_dir)
-            lib_dir = os.path.join(self.lib_name(), "lib")
-            self.cpp_info.libdirs.append(lib_dir)
             if not self.is_header_only(self.lib_name()):
+                lib_dir = os.path.join(self.lib_name(), "lib")
+                self.cpp_info.libdirs.append(lib_dir)
                 self.cpp_info.libs.extend(tools.collect_libs(self, lib_dir))
     
         self.cpp_info.defines.append("BOOST_ALL_NO_LIB=1")
