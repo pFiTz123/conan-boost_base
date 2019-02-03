@@ -37,7 +37,7 @@ class BoostBaseConan(ConanFile):
             self.b2_options = self.get_b2_options()
     
     def is_in_cycle_group(self):
-        return self.cycle_group != ""
+        return hasattr(self, 'cycle_group') and self.cycle_group != ""
         
     def is_cycle_group(self):
         return (("level" in self.name and "group" in self.name) or ("cycle_group" in self.name))
@@ -75,6 +75,11 @@ alias boost_{lib_short_name} : {space_joined_libs} : : : $(usage) ;
         return " ".join([option_str, include_str, define_str])
     
     def configure(self):
+        if self.is_in_cycle_group():
+            if getattr(self.__class__, 'options'):
+                for option in getattr(self.__class__, 'options').keys():
+                    value = getattr(self.options, option)
+                    setattr(self.options[self.cycle_group], option, value)
         self.configure_additional()
     
     def configure_additional(self):
