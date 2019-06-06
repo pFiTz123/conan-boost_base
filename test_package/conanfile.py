@@ -4,7 +4,7 @@
 from conans import python_requires, python_requires
 
 
-base = python_requires("boost_base/1.67.0@bincrafters/stable")
+base = python_requires("boost_base/1.70.0@fizzled/stable")
 
 class TestPackageConan(base.BoostBaseConan):
     name = "boost_test_package"
